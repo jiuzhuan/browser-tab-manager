@@ -1,0 +1,1 @@
+rootProject.name = "browser-tab-manager"
