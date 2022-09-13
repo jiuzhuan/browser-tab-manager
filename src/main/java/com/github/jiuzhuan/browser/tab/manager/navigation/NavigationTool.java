@@ -183,12 +183,12 @@ public class NavigationTool implements ToolWindowFactory {
         deleteButton.addActionListener(e -> this.deleteAllMainTab());
 
         JBPanel<JBPanel> jbPanel = new JBPanel<>();
-        jbPanel.setLayout(new GridLayout(18, 1));
+        jbPanel.setLayout(new GridLayout(16, 1));
         jbPanel.add(new JBLabel("New TAB Title"));
         jbPanel.add(titleText);
         jbPanel.add(addButton);
         jbPanel.add(deleteButton);
-        jbPanel.setBorder(BorderFactory.createEmptyBorder(200, 100, 200, 100));
+        jbPanel.setBorder(BorderFactory.createEmptyBorder(100, 100, 0, 100));
 //        Box verticalBox = Box.createVerticalBox();
 //        jbPanel.add(verticalBox);
 //        verticalBox.add(Box.createVerticalStrut(300));
@@ -215,13 +215,13 @@ public class NavigationTool implements ToolWindowFactory {
         addButton.addActionListener(e -> this.addSalveTab(mainTitle, jbTabbedPane, titleText.getText(), urlText.getText()));
 
         JBPanel<JBPanel> jbPanel = new JBPanel<>();
-        jbPanel.setLayout(new GridLayout(16, 1));
+        jbPanel.setLayout(new GridLayout(14, 1));
         jbPanel.add(new JBLabel("New TAB Title"));
         jbPanel.add(titleText);
         jbPanel.add(new JBLabel("URL"));
         jbPanel.add(urlText);
         jbPanel.add(addButton);
-        jbPanel.setBorder(BorderFactory.createEmptyBorder(200, 100, 200, 100));
+        jbPanel.setBorder(BorderFactory.createEmptyBorder(100, 100, 0, 100));
         return jbPanel;
     }
 
