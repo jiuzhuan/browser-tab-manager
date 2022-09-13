@@ -30,7 +30,7 @@ public class NavigationTool implements ToolWindowFactory {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        // µ±ÓÃ»§µ¥»÷¹¤¾ß´°¿Ú°´Å¥Ê±£¬½«µ÷ÓÃ¹¤³§ÀàµÄcreateToolWindowContent()·½·¨
+        // å½“ç”¨æˆ·å•å‡»å·¥å…·çª—å£æŒ‰é’®æ—¶ï¼Œå°†è°ƒç”¨å·¥å‚ç±»çš„createToolWindowContent()æ–¹æ³•
         ContentFactoryImpl factory = new ContentFactoryImpl();
 
         JBTabbedPane mainTab = this.newMainTabPane();
@@ -41,15 +41,15 @@ public class NavigationTool implements ToolWindowFactory {
     public JBTabbedPane newMainTabPane() {
         JBTabbedPane jbTabbedPane = new JBTabbedPane();
         jbTabbedPane.setTabComponentInsets(JBUI.emptyInsets());
-        // Ìí¼Ó±êÇ©Ò³
+        // æ·»åŠ æ ‡ç­¾é¡µ
         jbTabbedPane.insertTab(null, IconLoader.getIcon("/icons/add_dark.png", getClass()), this.getNewMainTabPanel(jbTabbedPane), null, 0);
-        // ²éÑ¯Ö÷±êÇ©Ò³
+        // æŸ¥è¯¢ä¸»æ ‡ç­¾é¡µ
         List<String> mainTitleList = NavigationTabMap.getMainTitleList();
         for (int i = 0; i < mainTitleList.size(); i++) {
-            // ²éÑ¯×Ó±êÇ©Ò³
+            // æŸ¥è¯¢å­æ ‡ç­¾é¡µ
             jbTabbedPane.addTab(mainTitleList.get(i), this.newSalveTabPane(mainTitleList.get(i)));
         }
-        // Ö÷Ñ¡Ïî¿¨¼àÌı
+        // ä¸»é€‰é¡¹å¡ç›‘å¬
         jbTabbedPane.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -61,14 +61,14 @@ public class NavigationTool implements ToolWindowFactory {
 
     private void mainTabMouseListener(MouseEvent mouseEvent, JBTabbedPane jbTabbedPane) {
         if (mouseEvent.getButton() == MouseEvent.BUTTON3) {
-            JMenuItem deleteMenuItem = new JMenuItem("É¾³ı");
+            JMenuItem deleteMenuItem = new JMenuItem("åˆ é™¤");
             deleteMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
                 if (index != -1) {
                     String title = jbTabbedPane.getTitleAt(index);
-                    // Ò³ÃæÉ¾³ı
+                    // é¡µé¢åˆ é™¤
                     jbTabbedPane.removeTabAt(index);
-                    // ÅäÖÃÉ¾³ı-Ö÷±êÇ©Ò³¼°Æä×Ó±êÇ©Ò³
+                    // é…ç½®åˆ é™¤-ä¸»æ ‡ç­¾é¡µåŠå…¶å­æ ‡ç­¾é¡µ
                     NavigationTabMap.deleteMainTab(title);
                 }
             });
@@ -83,7 +83,7 @@ public class NavigationTool implements ToolWindowFactory {
         jbTabbedPane.setTabComponentInsets(JBUI.emptyInsets());
         jbTabbedPane.insertTab(null, IconLoader.getIcon("/icons/add_dark.png", getClass()), this.getNewSalveTabPanel(mainTitle, jbTabbedPane), null, 0);
         List<Pair<String, String>> salveTabList = NavigationTabMap.getSalveTabList(mainTitle);
-        // FIXME: 2020/7/1 ĞÂÔöµÄ×Ó±êÇ©²»²»ÄÜË¢ĞÂ/²éÕÒµÈ²Ù×÷
+        // FIXME: 2020/7/1 æ–°å¢çš„å­æ ‡ç­¾ä¸ä¸èƒ½åˆ·æ–°/æŸ¥æ‰¾ç­‰æ“ä½œ
         List<JBCefBrowser> jbCefBrowserList = new ArrayList<>();
         for (int i = 0; i < salveTabList.size(); i++) {
             JBCefBrowser jbCefBrowser = new JBCefBrowser(salveTabList.get(i).getRight());
@@ -110,17 +110,17 @@ public class NavigationTool implements ToolWindowFactory {
                 salveTabMouseListener(e, jbTabbedPane, mainTitle, jbCefBrowserList);
             }
         });
-        // ×¢²áctrl+fËÑË÷¿ì½İ¼ü
+        // æ³¨å†Œctrl+fæœç´¢å¿«æ·é”®
         jbTabbedPane.registerKeyboardAction(e -> {
             SearchTextForm searchTextForm = new SearchTextForm();
             searchTextForm.show();
             jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).getCefBrowser().find(0, searchTextForm.getSearchText(), true, false, true);
         }, KeyStroke.getKeyStroke("ctrl F"), JComponent.WHEN_IN_FOCUSED_WINDOW);
-        //×¢²áf5Ë¢ĞÂ¿ì½İ¼ü
+        //æ³¨å†Œf5åˆ·æ–°å¿«æ·é”®
         jbTabbedPane.registerKeyboardAction(e -> {
             jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).getCefBrowser().reload();
         }, KeyStroke.getKeyStroke("F5"), JComponent.WHEN_IN_FOCUSED_WINDOW);
-        // register f12 devtools¿ì½İ¼ü(F12±»Õ¼ÓÃ, È¡ÏûÕ¼ÓÃ²ÅÉúĞ§, ÉèÖÃÓÅÏÈ¼¶ActionPromoter? )
+        // register f12 devtoolså¿«æ·é”®(F12è¢«å ç”¨, å–æ¶ˆå ç”¨æ‰ç”Ÿæ•ˆ, è®¾ç½®ä¼˜å…ˆçº§ActionPromoter? )
 //        jbTabbedPane.registerKeyboardAction(e -> {
 //            jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).openDevtools();
 //        }, KeyStroke.getKeyStroke("F12"), JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -129,7 +129,7 @@ public class NavigationTool implements ToolWindowFactory {
 
     private void salveTabMouseListener(MouseEvent mouseEvent, JBTabbedPane jbTabbedPane, String mainTitle, List<JBCefBrowser> jbCefBrowserList) {
         if (mouseEvent.getButton() == MouseEvent.BUTTON3) {
-            JMenuItem deleteMenuItem = new JMenuItem("É¾³ı");
+            JMenuItem deleteMenuItem = new JMenuItem("åˆ é™¤");
             deleteMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
                 if (index != -1) {
@@ -137,7 +137,7 @@ public class NavigationTool implements ToolWindowFactory {
                     NavigationTabMap.deleteSalveTab(mainTitle, index - 1);
                 }
             });
-            JMenuItem refreshMenuItem = new JMenuItem("µØÖ·À¸");
+            JMenuItem refreshMenuItem = new JMenuItem("åœ°å€æ ");
             refreshMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
                 if (index != -1) {
@@ -148,16 +148,16 @@ public class NavigationTool implements ToolWindowFactory {
                     jbCefBrowserList.get(index - 1).loadURL(searchTextForm.getSearchText());
                 }
             });
-            JMenuItem reloadMenuItem = new JMenuItem("»Ö¸´ÅäÖÃ");
+            JMenuItem reloadMenuItem = new JMenuItem("æ¢å¤é…ç½®");
             reloadMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
                 if (index != -1) {
-                    // idea 2022.1°æ±¾bug: Æµ·±´ò¿ª¹Ø±Õ¹¤¾ß´´½¨»áµ¼ÖÂÒ³ÃæÎŞ·¨¼ÓÔØ, ÕâÀïĞÂ½¨Ò»¸öÒ³Ãæ¼ÓÔØ
+                    // idea 2022.1ç‰ˆæœ¬bug: é¢‘ç¹æ‰“å¼€å…³é—­å·¥å…·åˆ›å»ºä¼šå¯¼è‡´é¡µé¢æ— æ³•åŠ è½½, è¿™é‡Œæ–°å»ºä¸€ä¸ªé¡µé¢åŠ è½½
                     String url = NavigationTabMap.getSalveTabList(mainTitle).get(index - 1).getRight();
                     jbTabbedPane.setComponentAt(index, new JBCefBrowser(url).getComponent());
                 }
             });
-            JMenuItem devToolMenuItem = new JMenuItem("¿ª·¢Õß¹¤¾ß");
+            JMenuItem devToolMenuItem = new JMenuItem("å¼€å‘è€…å·¥å…·");
             devToolMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
                 if (index != -1) {
@@ -192,7 +192,7 @@ public class NavigationTool implements ToolWindowFactory {
 //        Box verticalBox = Box.createVerticalBox();
 //        jbPanel.add(verticalBox);
 //        verticalBox.add(Box.createVerticalStrut(300));
-//        verticalBox.add(new JBLabel("ĞÂÑ¡Ïî¿¨±êÌâ"));
+//        verticalBox.add(new JBLabel("æ–°é€‰é¡¹å¡æ ‡é¢˜"));
 //        verticalBox.add(titleText);
 //        verticalBox.add(addButton);
 //        verticalBox.add(Box.createVerticalStrut(300));

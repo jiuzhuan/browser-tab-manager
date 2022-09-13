@@ -5,7 +5,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 
 /**
- * 气泡通知
+ * 姘旀场閫氱煡
  *
  * @date 2022/8/12 17:28
  */

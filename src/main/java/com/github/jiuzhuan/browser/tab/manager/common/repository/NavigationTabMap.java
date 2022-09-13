@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * ÍøÕ¾µ¼º½À¸ÅäÖÃ³Ö¾Ã»¯
+ * ç½‘ç«™å¯¼èˆªæ é…ç½®æŒä¹…åŒ–
  *
  * @date 2022/7/1 14:55
  */
@@ -75,7 +75,7 @@ public class NavigationTabMap {
         if (titles == null || urls == null) {
             return;
         }
-        // É¾³ıindexÎ»ÖÃµÄtitleºÍurl
+        // åˆ é™¤indexä½ç½®çš„titleå’Œurl
         PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + TITLEKEY + mainTitle, ArrayUtils.remove(titles, index));
         PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + URLKEY + mainTitle, ArrayUtils.remove(urls, index));
     }
