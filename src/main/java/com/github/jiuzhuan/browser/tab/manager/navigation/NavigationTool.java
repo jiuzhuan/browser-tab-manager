@@ -182,22 +182,18 @@ public class NavigationTool implements ToolWindowFactory {
         JButton deleteButton = new JButton("Delete All (Restart)");
         deleteButton.addActionListener(e -> this.deleteAllMainTab());
 
-        JBPanel<JBPanel> jbPanel = new JBPanel<>();
-        jbPanel.setLayout(new GridLayout(16, 1));
-        jbPanel.add(new JBLabel("New TAB Title"));
-        jbPanel.add(titleText);
-        jbPanel.add(addButton);
-        jbPanel.add(deleteButton);
-        jbPanel.setBorder(BorderFactory.createEmptyBorder(100, 100, 0, 100));
-//        Box verticalBox = Box.createVerticalBox();
-//        jbPanel.add(verticalBox);
-//        verticalBox.add(Box.createVerticalStrut(300));
-//        verticalBox.add(new JBLabel("新选项卡标题"));
-//        verticalBox.add(titleText);
-//        verticalBox.add(addButton);
-//        verticalBox.add(Box.createVerticalStrut(300));
+        JBPanel<JBPanel> contentPanel = new JBPanel<>();
+        contentPanel.setLayout(new GridLayout(4, 1));
+        contentPanel.add(new JBLabel("New TAB Title"));
+        contentPanel.add(titleText);
+        contentPanel.add(addButton);
+        contentPanel.add(deleteButton);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(100, 100, 0, 100));
 
-        return jbPanel;
+        JBPanel<JBPanel> panel = new JBPanel<>();
+        panel.setLayout(new BorderLayout());
+        panel.add(contentPanel, BorderLayout.NORTH);
+        return panel;
     }
 
     private void deleteAllMainTab() {
@@ -214,15 +210,19 @@ public class NavigationTool implements ToolWindowFactory {
         JButton addButton = new JButton("Add");
         addButton.addActionListener(e -> this.addSalveTab(mainTitle, jbTabbedPane, titleText.getText(), urlText.getText()));
 
-        JBPanel<JBPanel> jbPanel = new JBPanel<>();
-        jbPanel.setLayout(new GridLayout(14, 1));
-        jbPanel.add(new JBLabel("New TAB Title"));
-        jbPanel.add(titleText);
-        jbPanel.add(new JBLabel("URL"));
-        jbPanel.add(urlText);
-        jbPanel.add(addButton);
-        jbPanel.setBorder(BorderFactory.createEmptyBorder(100, 100, 0, 100));
-        return jbPanel;
+        JBPanel<JBPanel> contentPanel = new JBPanel<>();
+        contentPanel.setLayout(new GridLayout(5, 1));
+        contentPanel.add(new JBLabel("New TAB Title"));
+        contentPanel.add(titleText);
+        contentPanel.add(new JBLabel("URL"));
+        contentPanel.add(urlText);
+        contentPanel.add(addButton);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(100, 100, 0, 100));
+
+        JBPanel<JBPanel> panel = new JBPanel<>();
+        panel.setLayout(new BorderLayout());
+        panel.add(contentPanel, BorderLayout.NORTH);
+        return panel;
     }
 
     private void addMainTab(JBTabbedPane jbTabbedPane, String title) {
