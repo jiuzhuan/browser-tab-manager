@@ -23,7 +23,7 @@ tasks {
     withType<JavaCompile> {
         sourceCompatibility = "11"
         targetCompatibility = "11"
-        options.encoding = "GBK"
+        options.encoding = "UTF-8"
     }
 
     patchPluginXml {

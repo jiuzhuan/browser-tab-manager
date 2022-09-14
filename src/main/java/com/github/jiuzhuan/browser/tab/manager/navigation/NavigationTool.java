@@ -13,6 +13,7 @@ import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.content.ContentFactoryImpl;
 import com.intellij.ui.jcef.JBCefBrowser;
 import com.intellij.util.ui.JBUI;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,7 +65,7 @@ public class NavigationTool implements ToolWindowFactory {
             JMenuItem deleteMenuItem = new JMenuItem("删除");
             deleteMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
-                if (index != -1) {
+                if(index != -1) {
                     String title = jbTabbedPane.getTitleAt(index);
                     // 页面删除
                     jbTabbedPane.removeTabAt(index);
@@ -79,27 +80,14 @@ public class NavigationTool implements ToolWindowFactory {
     }
 
     private JBTabbedPane newSalveTabPane(String mainTitle) {
+        List<JBCefBrowser> jbCefBrowserList = new ArrayList<>();
+
         JBTabbedPane jbTabbedPane = new JBTabbedPane();
         jbTabbedPane.setTabComponentInsets(JBUI.emptyInsets());
-        jbTabbedPane.insertTab(null, IconLoader.getIcon("/icons/add_dark.png", getClass()), this.getNewSalveTabPanel(mainTitle, jbTabbedPane), null, 0);
+        jbTabbedPane.insertTab(null, IconLoader.getIcon("/icons/add_dark.png", getClass()), this.getNewSalveTabPanel(mainTitle, jbTabbedPane, jbCefBrowserList), null, 0);
         List<Pair<String, String>> salveTabList = NavigationTabMap.getSalveTabList(mainTitle);
-        // FIXME: 2020/7/1 新增的子标签不不能刷新/查找等操作
-        List<JBCefBrowser> jbCefBrowserList = new ArrayList<>();
         for (int i = 0; i < salveTabList.size(); i++) {
             JBCefBrowser jbCefBrowser = new JBCefBrowser(salveTabList.get(i).getRight());
-//            CefBrowser cefBrowser = jbCefBrowser.getCefBrowser();
-//            JBCefJSQuery jbCefJSQuery = JBCefJSQuery.create(jbCefBrowser);
-//            jbCefJSQuery.addHandler((link) -> {
-//                // handle link here
-//                return null; // can respond back to JS with JBCefJSQuery.Response
-//            });
-//            cefBrowser.executeJavaScript(
-//                    "window.JavaPanelBridge = {" +
-//                            "openInExternalBrowser : function(link) {" +
-//                            jbCefJSQuery.inject("link") +
-//                            "}" +
-//                            "};",
-//                    cefBrowser.getURL(), 0);
             jbCefBrowserList.add(jbCefBrowser);
             JComponent jbCefBrowserComponent = jbCefBrowser.getComponent();
             jbTabbedPane.addTab(salveTabList.get(i).getLeft(), null, jbCefBrowserComponent);
@@ -132,7 +120,7 @@ public class NavigationTool implements ToolWindowFactory {
             JMenuItem deleteMenuItem = new JMenuItem("删除");
             deleteMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
-                if (index != -1) {
+                if(index != -1) {
                     jbTabbedPane.removeTabAt(index);
                     NavigationTabMap.deleteSalveTab(mainTitle, index - 1);
                 }
@@ -140,7 +128,7 @@ public class NavigationTool implements ToolWindowFactory {
             JMenuItem refreshMenuItem = new JMenuItem("地址栏");
             refreshMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
-                if (index != -1) {
+                if(index != -1) {
                     SearchTextForm searchTextForm = new SearchTextForm();
                     searchTextForm.setSearchText(jbCefBrowserList.get(index - 1).getCefBrowser().getURL());
                     searchTextForm.setSize(700, 100);
@@ -148,32 +136,46 @@ public class NavigationTool implements ToolWindowFactory {
                     jbCefBrowserList.get(index - 1).loadURL(searchTextForm.getSearchText());
                 }
             });
-            JMenuItem reloadMenuItem = new JMenuItem("恢复配置");
-            reloadMenuItem.addActionListener(e -> {
+            JMenuItem resetMenuItem = new JMenuItem("恢复配置");
+            resetMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
-                if (index != -1) {
-                    // idea 2022.1版本bug: 频繁打开关闭工具创建会导致页面无法加载, 这里新建一个页面加载
+                if(index != -1) {
+                    // idea 2022.1版本bug: 频繁打开关闭工具创建会导致页面无法加载, 这里增加一个回复配置按钮
                     String url = NavigationTabMap.getSalveTabList(mainTitle).get(index - 1).getRight();
-                    jbTabbedPane.setComponentAt(index, new JBCefBrowser(url).getComponent());
+                    JBCefBrowser jbCefBrowser = new JBCefBrowser(url);
+                    jbCefBrowserList.add(index - 1, jbCefBrowser);
+                    jbTabbedPane.setComponentAt(index, jbCefBrowser.getComponent());
                 }
+            });
+            JMenuItem reloadMenuItem = new JMenuItem("刷新(F5)");
+            reloadMenuItem.addActionListener(e -> {
+                jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).getCefBrowser().reload();
+            });
+            JMenuItem searchMenuItem = new JMenuItem("查找(ctrl+F)");
+            searchMenuItem.addActionListener(e -> {
+                SearchTextForm searchTextForm = new SearchTextForm();
+                searchTextForm.show();
+                jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).getCefBrowser().find(0, searchTextForm.getSearchText(), true, false, true);
             });
             JMenuItem devToolMenuItem = new JMenuItem("开发者工具");
             devToolMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
-                if (index != -1) {
+                if(index != -1) {
                     jbCefBrowserList.get(index - 1).openDevtools();
                 }
             });
             JBPopupMenu jbPopupMenu = new JBPopupMenu();
             jbPopupMenu.add(deleteMenuItem);
+            jbPopupMenu.add(resetMenuItem);
             jbPopupMenu.add(refreshMenuItem);
             jbPopupMenu.add(reloadMenuItem);
+            jbPopupMenu.add(searchMenuItem);
             jbPopupMenu.add(devToolMenuItem);
             jbPopupMenu.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
         }
     }
 
-    public JBPanel getNewMainTabPanel(JBTabbedPane jbTabbedPane) {
+    public JBPanel getNewMainTabPanel(JBTabbedPane jbTabbedPane){
         JBTextField titleText = new JBTextField();
 
         JButton addButton = new JButton("Add");
@@ -190,6 +192,7 @@ public class NavigationTool implements ToolWindowFactory {
         contentPanel.add(deleteButton);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(100, 100, 0, 100));
 
+        // BorderLayout布局分为东南西北中五个区域, 其中南北可横向伸缩不可纵向伸缩, 东西相反, 中横向纵向都可伸缩
         JBPanel<JBPanel> panel = new JBPanel<>();
         panel.setLayout(new BorderLayout());
         panel.add(contentPanel, BorderLayout.NORTH);
@@ -202,13 +205,13 @@ public class NavigationTool implements ToolWindowFactory {
         }
     }
 
-    public JBPanel getNewSalveTabPanel(String mainTitle, JBTabbedPane jbTabbedPane) {
+    public JBPanel getNewSalveTabPanel(String mainTitle, JBTabbedPane jbTabbedPane, List<JBCefBrowser> jbCefBrowserList){
 
         JBTextField titleText = new JBTextField();
         JBTextField urlText = new JBTextField();
 
         JButton addButton = new JButton("Add");
-        addButton.addActionListener(e -> this.addSalveTab(mainTitle, jbTabbedPane, titleText.getText(), urlText.getText()));
+        addButton.addActionListener(e -> this.addSalveTab(mainTitle, jbTabbedPane, titleText.getText(), urlText.getText(), jbCefBrowserList));
 
         JBPanel<JBPanel> contentPanel = new JBPanel<>();
         contentPanel.setLayout(new GridLayout(5, 1));
@@ -226,12 +229,16 @@ public class NavigationTool implements ToolWindowFactory {
     }
 
     private void addMainTab(JBTabbedPane jbTabbedPane, String title) {
+        if (StringUtils.isEmpty(title)) return;
         jbTabbedPane.addTab(title, this.newSalveTabPane(title));
         NavigationTabMap.addMainTab(title);
     }
 
-    private void addSalveTab(String mainTitle, JBTabbedPane jbTabbedPane, String title, String url) {
-        jbTabbedPane.addTab(title, null, new JBCefBrowser(url).getComponent());
+    private void addSalveTab(String mainTitle, JBTabbedPane jbTabbedPane, String title, String url, List<JBCefBrowser> jbCefBrowserList) {
+        if (StringUtils.isEmpty(title)) return;
+        JBCefBrowser jbCefBrowser = new JBCefBrowser(url);
+        jbTabbedPane.addTab(title, null, jbCefBrowser.getComponent());
+        jbCefBrowserList.add(jbCefBrowser);
         NavigationTabMap.addSalveTab(mainTitle, title, url);
     }
 
