@@ -9,10 +9,10 @@ public class SearchTextForm extends DialogWrapper {
     private JPanel contentPane;
     private JTextField searchTextField;
 
-    public SearchTextForm() {
+    public SearchTextForm(String title) {
         super(true);
         init();
-        setTitle("Search");
+        setTitle(title);
     }
 
     public String getSearchText() {

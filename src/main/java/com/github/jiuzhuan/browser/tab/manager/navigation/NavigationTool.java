@@ -62,7 +62,7 @@ public class NavigationTool implements ToolWindowFactory {
 
     private void mainTabMouseListener(MouseEvent mouseEvent, JBTabbedPane jbTabbedPane) {
         if (mouseEvent.getButton() == MouseEvent.BUTTON3) {
-            JMenuItem deleteMenuItem = new JMenuItem("删除");
+            JMenuItem deleteMenuItem = new JMenuItem("Delete");
             deleteMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
                 if(index != -1) {
@@ -100,7 +100,7 @@ public class NavigationTool implements ToolWindowFactory {
         });
         // 注册ctrl+f搜索快捷键
         jbTabbedPane.registerKeyboardAction(e -> {
-            SearchTextForm searchTextForm = new SearchTextForm();
+            SearchTextForm searchTextForm = new SearchTextForm("Find");
             searchTextForm.show();
             jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).getCefBrowser().find(0, searchTextForm.getSearchText(), true, false, true);
         }, KeyStroke.getKeyStroke("ctrl F"), JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -117,47 +117,47 @@ public class NavigationTool implements ToolWindowFactory {
 
     private void salveTabMouseListener(MouseEvent mouseEvent, JBTabbedPane jbTabbedPane, String mainTitle, List<JBCefBrowser> jbCefBrowserList) {
         if (mouseEvent.getButton() == MouseEvent.BUTTON3) {
-            JMenuItem deleteMenuItem = new JMenuItem("删除");
+            JMenuItem deleteMenuItem = new JMenuItem("Delete");
             deleteMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
                 if(index != -1) {
                     jbTabbedPane.removeTabAt(index);
+                    jbCefBrowserList.remove(index - 1);
                     NavigationTabMap.deleteSalveTab(mainTitle, index - 1);
                 }
             });
-            JMenuItem refreshMenuItem = new JMenuItem("地址栏");
-            refreshMenuItem.addActionListener(e -> {
+            JMenuItem urlMenuItem = new JMenuItem("URL");
+            urlMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
                 if(index != -1) {
-                    SearchTextForm searchTextForm = new SearchTextForm();
+                    SearchTextForm searchTextForm = new SearchTextForm("URL");
                     searchTextForm.setSearchText(jbCefBrowserList.get(index - 1).getCefBrowser().getURL());
                     searchTextForm.setSize(700, 100);
                     searchTextForm.show();
                     jbCefBrowserList.get(index - 1).loadURL(searchTextForm.getSearchText());
                 }
             });
-            JMenuItem resetMenuItem = new JMenuItem("恢复配置");
-            resetMenuItem.addActionListener(e -> {
+            JMenuItem restoreMenuItem = new JMenuItem("Restore");
+            restoreMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
                 if(index != -1) {
                     // idea 2022.1版本bug: 频繁打开关闭工具创建会导致页面无法加载, 这里增加一个回复配置按钮
                     String url = NavigationTabMap.getSalveTabList(mainTitle).get(index - 1).getRight();
                     JBCefBrowser jbCefBrowser = new JBCefBrowser(url);
-                    jbCefBrowserList.add(index - 1, jbCefBrowser);
                     jbTabbedPane.setComponentAt(index, jbCefBrowser.getComponent());
                 }
             });
-            JMenuItem reloadMenuItem = new JMenuItem("刷新(F5)");
-            reloadMenuItem.addActionListener(e -> {
+            JMenuItem refreshMenuItem = new JMenuItem("Refresh(F5)");
+            refreshMenuItem.addActionListener(e -> {
                 jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).getCefBrowser().reload();
             });
-            JMenuItem searchMenuItem = new JMenuItem("查找(ctrl+F)");
-            searchMenuItem.addActionListener(e -> {
-                SearchTextForm searchTextForm = new SearchTextForm();
+            JMenuItem findMenuItem = new JMenuItem("Find(ctrl+F)");
+            findMenuItem.addActionListener(e -> {
+                SearchTextForm searchTextForm = new SearchTextForm("Find");
                 searchTextForm.show();
                 jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).getCefBrowser().find(0, searchTextForm.getSearchText(), true, false, true);
             });
-            JMenuItem devToolMenuItem = new JMenuItem("开发者工具");
+            JMenuItem devToolMenuItem = new JMenuItem("DevTools");
             devToolMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
                 if(index != -1) {
@@ -166,10 +166,10 @@ public class NavigationTool implements ToolWindowFactory {
             });
             JBPopupMenu jbPopupMenu = new JBPopupMenu();
             jbPopupMenu.add(deleteMenuItem);
-            jbPopupMenu.add(resetMenuItem);
+            jbPopupMenu.add(restoreMenuItem);
+            jbPopupMenu.add(urlMenuItem);
             jbPopupMenu.add(refreshMenuItem);
-            jbPopupMenu.add(reloadMenuItem);
-            jbPopupMenu.add(searchMenuItem);
+            jbPopupMenu.add(findMenuItem);
             jbPopupMenu.add(devToolMenuItem);
             jbPopupMenu.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
         }
@@ -186,7 +186,7 @@ public class NavigationTool implements ToolWindowFactory {
 
         JBPanel<JBPanel> contentPanel = new JBPanel<>();
         contentPanel.setLayout(new GridLayout(4, 1));
-        contentPanel.add(new JBLabel("New TAB Title"));
+        contentPanel.add(new JBLabel("New Tab Title"));
         contentPanel.add(titleText);
         contentPanel.add(addButton);
         contentPanel.add(deleteButton);
@@ -215,7 +215,7 @@ public class NavigationTool implements ToolWindowFactory {
 
         JBPanel<JBPanel> contentPanel = new JBPanel<>();
         contentPanel.setLayout(new GridLayout(5, 1));
-        contentPanel.add(new JBLabel("New TAB Title"));
+        contentPanel.add(new JBLabel("New Tab Title"));
         contentPanel.add(titleText);
         contentPanel.add(new JBLabel("URL"));
         contentPanel.add(urlText);
