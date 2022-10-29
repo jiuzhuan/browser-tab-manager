@@ -49,12 +49,39 @@ public class NavigationTabMap {
         return Arrays.asList(titles);
     }
 
+    public static void moveMainTitleList(Integer source, Integer target) {
+        String[] titles = PropertiesComponent.getInstance().getValues(NAVKEY + MAINKEY + TITLEKEY);
+        if (titles == null) return;
+        titles = ArrayUtils.insert(target, titles, titles[source]);
+        if (target < source) source++;
+        titles = ArrayUtils.remove(titles, source);
+        PropertiesComponent.getInstance().setValues(NAVKEY + MAINKEY + TITLEKEY, titles);
+    }
+
     public static List<Pair<String, String>> getSalveTabList(String mainTitle) {
         String[] titles = PropertiesComponent.getInstance().getValues(NAVKEY + SALVEKEY + TITLEKEY + mainTitle);
         String[] urls = PropertiesComponent.getInstance().getValues(NAVKEY + SALVEKEY + URLKEY + mainTitle);
         if (titles == null || urls == null) {
             return Collections.emptyList();
         }
+        List<Pair<String, String>> list = new ArrayList<>();
+        for (int i = 0; i < titles.length; i++) {
+            list.add(Pair.of(titles[i], urls[i]));
+        }
+        return list;
+    }
+
+    public static List<Pair<String, String>> moveSalveTabList(String mainTitle, Integer source, Integer target) {
+        String[] titles = PropertiesComponent.getInstance().getValues(NAVKEY + SALVEKEY + TITLEKEY + mainTitle);
+        String[] urls = PropertiesComponent.getInstance().getValues(NAVKEY + SALVEKEY + URLKEY + mainTitle);
+        if (titles == null || urls == null) return Collections.emptyList();
+        titles = ArrayUtils.insert(target, titles, titles[source]);
+        urls = ArrayUtils.insert(target, urls, urls[source]);
+        if (target < source) source++;
+        titles = ArrayUtils.remove(titles, source);
+        urls = ArrayUtils.remove(urls, source);
+        PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + TITLEKEY + mainTitle, titles);
+        PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + URLKEY + mainTitle, urls);
         List<Pair<String, String>> list = new ArrayList<>();
         for (int i = 0; i < titles.length; i++) {
             list.add(Pair.of(titles[i], urls[i]));

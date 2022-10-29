@@ -48,10 +48,31 @@ public class NavigationTool implements ToolWindowFactory {
         List<String> mainTitleList = NavigationTabMap.getMainTitleList();
         for (int i = 0; i < mainTitleList.size(); i++) {
             // 查询子标签页
-            jbTabbedPane.addTab(mainTitleList.get(i), this.newSalveTabPane(mainTitleList.get(i)));
+            JBTabbedPane salveTabPane = this.newSalveTabPane(mainTitleList.get(i));
+            jbTabbedPane.addTab(mainTitleList.get(i), salveTabPane);
         }
         // 主选项卡监听
         jbTabbedPane.addMouseListener(new MouseAdapter() {
+            private Integer sourceIndex;
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int index = jbTabbedPane.indexAtLocation(e.getX(), e.getY());
+                if(index < 1) return;
+                sourceIndex = index;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int index = jbTabbedPane.indexAtLocation(e.getX(), e.getY());
+                if(index < 1) return;
+                if (index == sourceIndex) return;
+                NavigationTabMap.moveMainTitleList(sourceIndex - 1, index - 1);
+                String sourceTitle = jbTabbedPane.getTitleAt(sourceIndex);
+                jbTabbedPane.insertTab(sourceTitle, null, newSalveTabPane(sourceTitle), null, index);
+                if (index < sourceIndex) sourceIndex++;
+                jbTabbedPane.removeTabAt(sourceIndex);
+            }
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 mainTabMouseListener(e, jbTabbedPane);
@@ -93,6 +114,28 @@ public class NavigationTool implements ToolWindowFactory {
             jbTabbedPane.addTab(salveTabList.get(i).getLeft(), null, jbCefBrowserComponent);
         }
         jbTabbedPane.addMouseListener(new MouseAdapter() {
+            private Integer sourceIndex;
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int index = jbTabbedPane.indexAtLocation(e.getX(), e.getY());
+                if(index < 1) return;
+                sourceIndex = index;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int index = jbTabbedPane.indexAtLocation(e.getX(), e.getY());
+                if(index < 1) return;
+                if (index == sourceIndex) return;
+                List<Pair<String, String>> salveTabList = NavigationTabMap.moveSalveTabList(mainTitle, sourceIndex - 1, index - 1);
+                String sourceTitle = jbTabbedPane.getTitleAt(sourceIndex);
+                JBCefBrowser jbCefBrowser = new JBCefBrowser(salveTabList.get(index - 1).getRight());
+                jbCefBrowserList.add(index - 1, jbCefBrowser);
+                jbTabbedPane.insertTab(sourceTitle, null, jbCefBrowser.getComponent(), null, index);
+                if (index < sourceIndex) sourceIndex++;
+                jbCefBrowserList.remove(sourceIndex - 1);
+                jbTabbedPane.removeTabAt(sourceIndex);
+            }
             @Override
             public void mouseClicked(MouseEvent e) {
                 salveTabMouseListener(e, jbTabbedPane, mainTitle, jbCefBrowserList);
