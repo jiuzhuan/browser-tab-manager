@@ -21,6 +21,7 @@
         <li>Select or add second-level directory.</li>
         <li>Switch tabs to browse different websites.</li>
         <li>Right-click the tab to display the menu(url/refresh/find/devTools...).</li>
+        <li>Drag the label to adjust the order</li>
     </ul>
     <img src="https://github.com/jiuzhuan/browser-tab-manager/blob/main/doc/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%A0%87%E7%AD%BE%E7%AE%A1%E7%90%86%E6%BC%94%E7%A4%BA.gif?raw=true">
   ]]></description>
