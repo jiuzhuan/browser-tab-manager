@@ -83,6 +83,17 @@ public class NavigationTool implements ToolWindowFactory {
 
     private void mainTabMouseListener(MouseEvent mouseEvent, JBTabbedPane jbTabbedPane) {
         if (mouseEvent.getButton() == MouseEvent.BUTTON3) {
+            JMenuItem editMenuItem = new JMenuItem("Edit");
+            editMenuItem.addActionListener(e -> {
+                int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
+                if(index != -1) {
+                    String title = jbTabbedPane.getTitleAt(index);
+                    OneTextForm searchTextForm = new OneTextForm("Edit", title);
+                    searchTextForm.show();
+                    jbTabbedPane.setTitleAt(index, searchTextForm.getText());
+                    NavigationTabMap.updateMainTab(title, searchTextForm.getText());
+                }
+            });
             JMenuItem deleteMenuItem = new JMenuItem("Delete");
             deleteMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
@@ -95,6 +106,7 @@ public class NavigationTool implements ToolWindowFactory {
                 }
             });
             JBPopupMenu jbPopupMenu = new JBPopupMenu();
+            jbPopupMenu.add(editMenuItem);
             jbPopupMenu.add(deleteMenuItem);
             jbPopupMenu.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
         }
@@ -143,9 +155,9 @@ public class NavigationTool implements ToolWindowFactory {
         });
         // 注册ctrl+f搜索快捷键
         jbTabbedPane.registerKeyboardAction(e -> {
-            SearchTextForm searchTextForm = new SearchTextForm("Find");
+            OneTextForm searchTextForm = new OneTextForm("Find", null);
             searchTextForm.show();
-            jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).getCefBrowser().find(0, searchTextForm.getSearchText(), true, false, true);
+            jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).getCefBrowser().find(0, searchTextForm.getText(), true, false, true);
         }, KeyStroke.getKeyStroke("ctrl F"), JComponent.WHEN_IN_FOCUSED_WINDOW);
         //注册f5刷新快捷键
         jbTabbedPane.registerKeyboardAction(e -> {
@@ -160,6 +172,19 @@ public class NavigationTool implements ToolWindowFactory {
 
     private void salveTabMouseListener(MouseEvent mouseEvent, JBTabbedPane jbTabbedPane, String mainTitle, List<JBCefBrowser> jbCefBrowserList) {
         if (mouseEvent.getButton() == MouseEvent.BUTTON3) {
+            JMenuItem editMenuItem = new JMenuItem("Edit");
+            editMenuItem.addActionListener(e -> {
+                int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
+                if(index != -1) {
+                    String title = jbTabbedPane.getTitleAt(index);
+                    String url = jbCefBrowserList.get(index - 1).getCefBrowser().getURL();
+                    SlaveTabEdit slaveTabEdit = new SlaveTabEdit(title, url);
+                    slaveTabEdit.show();
+                    jbTabbedPane.setTitleAt(index, slaveTabEdit.tabText.getText());
+                    jbCefBrowserList.get(index - 1).loadURL(slaveTabEdit.urlText.getText());
+                    NavigationTabMap.updateSlaveTab(mainTitle, title, slaveTabEdit.tabText.getText(), slaveTabEdit.urlText.getText());
+                }
+            });
             JMenuItem deleteMenuItem = new JMenuItem("Delete");
             deleteMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
@@ -173,11 +198,10 @@ public class NavigationTool implements ToolWindowFactory {
             urlMenuItem.addActionListener(e -> {
                 int index = jbTabbedPane.indexAtLocation(mouseEvent.getX(), mouseEvent.getY());
                 if(index != -1) {
-                    SearchTextForm searchTextForm = new SearchTextForm("URL");
-                    searchTextForm.setSearchText(jbCefBrowserList.get(index - 1).getCefBrowser().getURL());
+                    OneTextForm searchTextForm = new OneTextForm("URL", jbCefBrowserList.get(index - 1).getCefBrowser().getURL());
                     searchTextForm.setSize(700, 100);
                     searchTextForm.show();
-                    jbCefBrowserList.get(index - 1).loadURL(searchTextForm.getSearchText());
+                    jbCefBrowserList.get(index - 1).loadURL(searchTextForm.getText());
                 }
             });
             JMenuItem restoreMenuItem = new JMenuItem("Restore");
@@ -196,9 +220,9 @@ public class NavigationTool implements ToolWindowFactory {
             });
             JMenuItem findMenuItem = new JMenuItem("Find(ctrl+F)");
             findMenuItem.addActionListener(e -> {
-                SearchTextForm searchTextForm = new SearchTextForm("Find");
+                OneTextForm searchTextForm = new OneTextForm("Find", null);
                 searchTextForm.show();
-                jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).getCefBrowser().find(0, searchTextForm.getSearchText(), true, false, true);
+                jbCefBrowserList.get(jbTabbedPane.getSelectedIndex() - 1).getCefBrowser().find(0, searchTextForm.getText(), true, false, true);
             });
             JMenuItem devToolMenuItem = new JMenuItem("DevTools");
             devToolMenuItem.addActionListener(e -> {
@@ -208,6 +232,7 @@ public class NavigationTool implements ToolWindowFactory {
                 }
             });
             JBPopupMenu jbPopupMenu = new JBPopupMenu();
+            jbPopupMenu.add(editMenuItem);
             jbPopupMenu.add(deleteMenuItem);
             jbPopupMenu.add(restoreMenuItem);
             jbPopupMenu.add(urlMenuItem);

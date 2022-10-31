@@ -4,10 +4,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * 网站导航栏配置持久化
@@ -96,6 +93,20 @@ public class NavigationTabMap {
         PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + URLKEY + title, null);
     }
 
+    public static void updateMainTab(String before, String after) {
+        String[] titles = PropertiesComponent.getInstance().getValues(NAVKEY + MAINKEY + TITLEKEY);
+        for (int i = 0; i < titles.length; i++) {
+            if (Objects.equals(titles[i], before)) titles[i] = after;
+        }
+        PropertiesComponent.getInstance().setValues(NAVKEY + MAINKEY + TITLEKEY, titles);
+        String[] slaveTitles = PropertiesComponent.getInstance().getValues(NAVKEY + SALVEKEY + TITLEKEY + before);
+        String[] urls = PropertiesComponent.getInstance().getValues(NAVKEY + SALVEKEY + URLKEY + before);
+        PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + TITLEKEY + after, slaveTitles);
+        PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + URLKEY + after, urls);
+        PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + TITLEKEY + before, null);
+        PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + URLKEY + before, null);
+    }
+
     public static void deleteSalveTab(String mainTitle, int index) {
         String[] titles = PropertiesComponent.getInstance().getValues(NAVKEY + SALVEKEY + TITLEKEY + mainTitle);
         String[] urls = PropertiesComponent.getInstance().getValues(NAVKEY + SALVEKEY + URLKEY + mainTitle);
@@ -105,5 +116,18 @@ public class NavigationTabMap {
         // 删除index位置的title和url
         PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + TITLEKEY + mainTitle, ArrayUtils.remove(titles, index));
         PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + URLKEY + mainTitle, ArrayUtils.remove(urls, index));
+    }
+
+    public static void updateSlaveTab(String mainTitle, String beforeTitle, String afterTitle, String afterUrl) {
+        String[] titles = PropertiesComponent.getInstance().getValues(NAVKEY + SALVEKEY + TITLEKEY + mainTitle);
+        String[] urls = PropertiesComponent.getInstance().getValues(NAVKEY + SALVEKEY + URLKEY + mainTitle);
+        for (int i = 0; i < titles.length; i++) {
+            if (Objects.equals(titles[i], beforeTitle)) {
+                titles[i] = afterTitle;
+                urls[i] = afterUrl;
+            }
+        }
+        PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + TITLEKEY + mainTitle, titles);
+        PropertiesComponent.getInstance().setValues(NAVKEY + SALVEKEY + URLKEY + mainTitle, urls);
     }
 }

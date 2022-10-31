@@ -14,14 +14,12 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    Browser Tab Manager can create editable secondary directories to keep web page organized.<br>
+    Browser Tab Manager is a Embedded Web Browser for IDEA, create editable secondary directories to keep web page organized.<br>
     <ul>
-        <li>Click Browser Tab Manager toolWindow.</li>
-        <li>Select or add first-level directory.</li>
-        <li>Select or add second-level directory.</li>
-        <li>Switch tabs to browse different websites.</li>
-        <li>Right-click the tab to display the menu(url/refresh/find/devTools...).</li>
-        <li>Drag the label to adjust the order</li>
+        <li>Right-click the tool window Browser Tab Manager in the project</li>
+        <li>you need to configure the secondary directory for the first use (it is recommended that the first level is classified by project and the second level is classified by website) </li>
+        <li>Switch tabs to browse different websites (it is recommended to change the window view mode to window) mode) </li>
+        <li>Right-click the tab to display the menu, drag the tab to adjust the order </li>
     </ul>
     <img src="https://github.com/jiuzhuan/browser-tab-manager/blob/main/doc/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%A0%87%E7%AD%BE%E7%AE%A1%E7%90%86%E6%BC%94%E7%A4%BA.gif?raw=true">
   ]]></description>

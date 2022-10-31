@@ -2,14 +2,13 @@
 
 ### 功能
 
-**内嵌的Chromium的Intellij Idea插件, 提供多级的浏览器标签页管理**
+**在Intellij Idea内打开内嵌的Chromium的浏览器, 提供多级的浏览器标签页管理**
 
 ![浏览器标签管理演示](doc/浏览器标签管理演示.gif)
 
 ### 安装方式
 
-1. 方式一: 插件市场安装: Intellij Idea插件市场搜索 Browser Tab Manager
-2. 方式二: 硬盘安装: [Releases](https://github.com/jiuzhuan/browser-tab-manager/releases)下载安装包, Intellij Idea内硬盘安装
+插件市场安装: Intellij Idea插件市场搜索 Browser Tab Manager
 
 ### 使用方式
 

@@ -5,22 +5,19 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class SearchTextForm extends DialogWrapper {
+public class OneTextForm extends DialogWrapper {
     private JPanel contentPane;
-    private JTextField searchTextField;
+    private JTextField textField;
 
-    public SearchTextForm(String title) {
+    public OneTextForm(String title, String text) {
         super(true);
         init();
         setTitle(title);
+        if (text != null) textField.setText(text);
     }
 
-    public String getSearchText() {
-        return searchTextField.getText();
-    }
-
-    public void setSearchText(String text) {
-        searchTextField.setText(text);
+    public String getText() {
+        return textField.getText();
     }
 
     @Override
